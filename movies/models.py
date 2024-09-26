@@ -18,7 +18,7 @@ class Genre(models.Model):
 
     class Meta:
         # Ваши таблицы находятся в нестандартной схеме. Это нужно указать в классе модели
-        db_table = "content'.'genre"
+        db_table = 'content"."genre'  # Работает только с таким порядком кавычек
         # Следующие два поля отвечают за название модели в интерфейсе
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
