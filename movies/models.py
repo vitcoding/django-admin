@@ -83,3 +83,15 @@ class GenreFilmwork(UUIDMixin):
 
     class Meta:
         db_table = 'content"."genre_film_work'
+
+
+class Person(UUIDMixin, TimeStampedMixin):
+    full_name = models.TextField("Полное имя")
+
+    class Meta:
+        db_table = 'content"."person'
+        verbose_name = "Персона"
+        verbose_name_plural = "Персоны"
+
+    def __str__(self):
+        return self.full_name
