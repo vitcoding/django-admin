@@ -44,6 +44,18 @@ class Genre(UUIDMixin, TimeStampedMixin):
         return self.name
 
 
+class Person(UUIDMixin, TimeStampedMixin):
+    full_name = models.TextField("Полное имя")
+
+    class Meta:
+        db_table = 'content"."person'
+        verbose_name = "Персона"
+        verbose_name_plural = "Персоны"
+
+    def __str__(self):
+        return self.full_name
+
+
 class Filmwork(UUIDMixin, TimeStampedMixin):
     # class Filmtype(models.TextChoices):
     #     movie = ("movie", "movie")
@@ -66,6 +78,7 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         default=Filmtype.MOVIE,
     )
     genres = models.ManyToManyField(Genre, through="GenreFilmwork")
+    persons = models.ManyToManyField(Person, through="PersonFilmwork")
 
     class Meta:
         db_table = 'content"."film_work'
@@ -85,13 +98,11 @@ class GenreFilmwork(UUIDMixin):
         db_table = 'content"."genre_film_work'
 
 
-class Person(UUIDMixin, TimeStampedMixin):
-    full_name = models.TextField("Полное имя")
+class PersonFilmwork(UUIDMixin):
+    film_work = models.ForeignKey("Filmwork", on_delete=models.CASCADE)
+    person = models.ForeignKey("Person", on_delete=models.CASCADE)
+    role = models.TextField("Роль")
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'content"."person'
-        verbose_name = "Персона"
-        verbose_name_plural = "Персоны"
-
-    def __str__(self):
-        return self.full_name
+        db_table = 'content"."person_film_work'
