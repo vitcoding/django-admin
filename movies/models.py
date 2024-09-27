@@ -4,6 +4,12 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+# Для ситуаций, когда необходимо создать новый проект на Django
+# с существующей базой данных, разработчики фреймворка создали
+# команду python manage.py inspectdb.
+# Она возвращает содержимое models.py, основанное на схеме БД,
+# и позволяет пропустить этап описания моделей вручную.
+
 
 class TimeStampedMixin(models.Model):
     # auto_now_add автоматически выставит дату создания записи
@@ -91,18 +97,24 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
 
 class GenreFilmwork(UUIDMixin):
     film_work = models.ForeignKey("Filmwork", on_delete=models.CASCADE)
-    genre = models.ForeignKey("Genre", on_delete=models.CASCADE)
+    genre = models.ForeignKey("Genre", on_delete=models.CASCADE, verbose_name="Жанр")
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'content"."genre_film_work'
+        verbose_name = "Жанр телефильма"
+        verbose_name_plural = "Жанры телефильма"
 
 
 class PersonFilmwork(UUIDMixin):
     film_work = models.ForeignKey("Filmwork", on_delete=models.CASCADE)
-    person = models.ForeignKey("Person", on_delete=models.CASCADE)
+    person = models.ForeignKey(
+        "Person", on_delete=models.CASCADE, verbose_name="Персона"
+    )
     role = models.TextField("Роль")
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'content"."person_film_work'
+        verbose_name = "Персона телефильма"
+        verbose_name_plural = "Персоны телефильма"
