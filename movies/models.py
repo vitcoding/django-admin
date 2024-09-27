@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Genre(models.Model):
@@ -8,9 +9,9 @@ class Genre(models.Model):
     # Вам же придётся явно объявить primary key.
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # Первым аргументом обычно идёт человекочитаемое название поля
-    name = models.CharField("name", max_length=255)
+    name = models.CharField("Название", max_length=255)
     # blank=True делает поле необязательным для заполнения.
-    description = models.TextField("description", blank=True)
+    description = models.TextField("Описание", blank=True)
     # auto_now_add автоматически выставит дату создания записи
     created = models.DateTimeField(auto_now_add=True)
     # auto_now изменятся при каждом обновлении записи
@@ -22,3 +23,38 @@ class Genre(models.Model):
         # Следующие два поля отвечают за название модели в интерфейсе
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
+
+    def __str__(self):
+        return self.name
+
+
+class Filmwork(models.Model):
+    # class Filmtype(models.TextChoices):
+    #     movie = ("movie", "movie")
+    #     tv_show = ("tv_show", "tv_show")
+
+    # Enumeration types
+    class Filmtype(models.TextChoices):
+        MOVIE = "movie", _("Фильм")
+        TV_SHOW = "tv_show", _("Телепередача")
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.TextField("Название")
+    description = models.TextField("Описание", blank=True)
+    creation_date = models.DateField("Дата создания", blank=True)
+    rating = models.FloatField("Рейтинг", blank=True)
+    type = models.CharField(
+        "Тип",
+        choices=Filmtype.choices,
+        default=Filmtype.MOVIE,
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'content"."film_work'
+        verbose_name = "Телефильм"
+        verbose_name_plural = "Телефильмы"
+
+    def __str__(self):
+        return self.title
