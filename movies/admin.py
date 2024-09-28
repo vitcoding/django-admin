@@ -7,7 +7,6 @@ from .models import Filmwork, Genre, GenreFilmwork, Person, PersonFilmwork
 class GenreAdmin(admin.ModelAdmin):
     list_display = (
         "name",
-        "description",  ###
         "modified",
     )
 
@@ -26,7 +25,6 @@ class PersonAdmin(admin.ModelAdmin):
     )
 
     search_fields = ("full_name", "id")
-    # search_fields = ("full_name",)
 
 
 class PersonFilmworkInline(admin.TabularInline):
@@ -46,7 +44,7 @@ class FilmworkAdmin(admin.ModelAdmin):
     )
 
     # Фильтрация в списке
-    list_filter = ("type",)
+    list_filter = ("type", "creation_date")
 
     # Поиск по полям
     search_fields = ("title", "description", "id")

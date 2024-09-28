@@ -48,6 +48,7 @@ class Genre(UUIDMixin, TimeStampedMixin):
         # Следующие два поля отвечают за название модели в интерфейсе
         verbose_name = _("genre")
         verbose_name_plural = _("genres")
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -60,6 +61,7 @@ class Person(UUIDMixin, TimeStampedMixin):
         db_table = 'content"."person'
         verbose_name = _("person")
         verbose_name_plural = _("persons")
+        ordering = ["full_name"]
 
     def __str__(self):
         return self.full_name
@@ -99,6 +101,7 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         db_table = 'content"."film_work'
         verbose_name = _("film_work")
         verbose_name_plural = _("film_works")
+        ordering = ["-modified"]
 
     def __str__(self):
         return self.title
