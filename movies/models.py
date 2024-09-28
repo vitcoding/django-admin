@@ -2,6 +2,9 @@ import uuid
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+# python manage.py makemessages -l en -l ru
+# python manage.py compilemessages -l en -l ru
 from django.utils.translation import gettext_lazy as _
 
 # Для ситуаций, когда необходимо создать новый проект на Django
@@ -13,9 +16,9 @@ from django.utils.translation import gettext_lazy as _
 
 class TimeStampedMixin(models.Model):
     # auto_now_add автоматически выставит дату создания записи
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(_("created"), auto_now_add=True)
     # auto_now изменятся при каждом обновлении записи
-    modified = models.DateTimeField(auto_now=True)
+    modified = models.DateTimeField(_("modified"), auto_now=True)
 
     class Meta:
         # Этот параметр указывает Django, что этот класс не является представлением таблицы
@@ -25,7 +28,7 @@ class TimeStampedMixin(models.Model):
 class UUIDMixin(models.Model):
     # Типичная модель в Django использует число в качестве id. В таких ситуациях поле не описывается в модели.
     # Вам же придётся явно объявить primary key.
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(_("id"), primary_key=True, default=uuid.uuid4, editable=False)
 
     class Meta:
         abstract = True
@@ -35,28 +38,28 @@ class UUIDMixin(models.Model):
 # потому что этот класс уже является родителем у миксинов.
 class Genre(UUIDMixin, TimeStampedMixin):
     # Первым аргументом обычно идёт человекочитаемое название поля
-    name = models.CharField("Название", max_length=255)
+    name = models.CharField(_("name_title"), max_length=255)
     # blank=True делает поле необязательным для заполнения.
-    description = models.TextField("Описание", blank=True)
+    description = models.TextField(_("description"), blank=True)
 
     class Meta:
         # Ваши таблицы находятся в нестандартной схеме. Это нужно указать в классе модели
         db_table = 'content"."genre'  # Работает только с таким порядком кавычек
         # Следующие два поля отвечают за название модели в интерфейсе
-        verbose_name = "Жанр"
-        verbose_name_plural = "Жанры"
+        verbose_name = _("genre")
+        verbose_name_plural = _("genres")
 
     def __str__(self):
         return self.name
 
 
 class Person(UUIDMixin, TimeStampedMixin):
-    full_name = models.TextField("Полное имя")
+    full_name = models.TextField(_("full_name"))
 
     class Meta:
         db_table = 'content"."person'
-        verbose_name = "Персона"
-        verbose_name_plural = "Персоны"
+        verbose_name = _("person")
+        verbose_name_plural = _("persons")
 
     def __str__(self):
         return self.full_name
@@ -69,52 +72,64 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
 
     # Enumeration types
     class Filmtype(models.TextChoices):
-        MOVIE = "movie", _("Фильм")
-        TV_SHOW = "tv_show", _("Телепередача")
+        MOVIE = "movie", _("movie")
+        TV_SHOW = "tv_show", _("tv_show")
 
-    title = models.TextField("Название")
-    description = models.TextField("Описание", blank=True)
-    creation_date = models.DateField("Дата создания", blank=True)
+    title = models.TextField(_("title"))
+    description = models.TextField(_("description"), blank=True)
+    creation_date = models.DateField(_("creation_date"), blank=True)
     rating = models.FloatField(
-        "Рейтинг", blank=True, validators=[MinValueValidator(0), MaxValueValidator(100)]
+        _("rating"),
+        blank=True,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
     )
     type = models.CharField(
-        "Тип",
+        _("type"),
         choices=Filmtype.choices,
-        default=Filmtype.MOVIE,
+        # default=Filmtype.MOVIE,
     )
-    genres = models.ManyToManyField(Genre, through="GenreFilmwork")
-    persons = models.ManyToManyField(Person, through="PersonFilmwork")
+    genres = models.ManyToManyField(
+        Genre, through="GenreFilmwork", verbose_name=_("genres")
+    )
+    persons = models.ManyToManyField(
+        Person, through="PersonFilmwork", verbose_name=_("persons")
+    )
 
     class Meta:
         db_table = 'content"."film_work'
-        verbose_name = "Телефильм"
-        verbose_name_plural = "Телефильмы"
+        verbose_name = _("film_work")
+        verbose_name_plural = _("film_works")
 
     def __str__(self):
         return self.title
 
 
 class GenreFilmwork(UUIDMixin):
-    film_work = models.ForeignKey("Filmwork", on_delete=models.CASCADE)
-    genre = models.ForeignKey("Genre", on_delete=models.CASCADE, verbose_name="Жанр")
-    created = models.DateTimeField(auto_now_add=True)
+    film_work = models.ForeignKey(
+        "Filmwork", on_delete=models.CASCADE, verbose_name=_("film_work")
+    )
+    genre = models.ForeignKey(
+        "Genre", on_delete=models.CASCADE, verbose_name=_("genre")
+    )
+    created = models.DateTimeField(_("created"), auto_now_add=True)
 
     class Meta:
         db_table = 'content"."genre_film_work'
-        verbose_name = "Жанр телефильма"
-        verbose_name_plural = "Жанры телефильма"
+        verbose_name = _("genre_film_work")
+        verbose_name_plural = _("genres_film_work")
 
 
 class PersonFilmwork(UUIDMixin):
-    film_work = models.ForeignKey("Filmwork", on_delete=models.CASCADE)
-    person = models.ForeignKey(
-        "Person", on_delete=models.CASCADE, verbose_name="Персона"
+    film_work = models.ForeignKey(
+        "Filmwork", on_delete=models.CASCADE, verbose_name=_("film_work")
     )
-    role = models.TextField("Роль")
-    created = models.DateTimeField(auto_now_add=True)
+    person = models.ForeignKey(
+        "Person", on_delete=models.CASCADE, verbose_name=_("person")
+    )
+    role = models.TextField(_("role"))
+    created = models.DateTimeField(_("created"), auto_now_add=True)
 
     class Meta:
         db_table = 'content"."person_film_work'
-        verbose_name = "Персона телефильма"
-        verbose_name_plural = "Персоны телефильма"
+        verbose_name = _("person_film_work")
+        verbose_name_plural = _("persons_film_work")
