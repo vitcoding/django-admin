@@ -51,7 +51,12 @@ class Genre(UUIDMixin, TimeStampedMixin):
 
 
 class Person(UUIDMixin, TimeStampedMixin):
+    class Gender(models.TextChoices):
+        MALE = "male", _("male")
+        FEMALE = "female", _("female")
+
     full_name = models.TextField("Полное имя")
+    gender = models.TextField(_("gender"), choices=Gender.choices, null=True)
 
     class Meta:
         db_table = 'content"."person'
@@ -72,6 +77,8 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         MOVIE = "movie", _("Фильм")
         TV_SHOW = "tv_show", _("Телепередача")
 
+    certificate = models.CharField(_("certificate"), max_length=512, blank=True)
+    file_path = models.FileField(_("file"), blank=True, null=True, upload_to="movies/")
     title = models.TextField("Название")
     description = models.TextField("Описание", blank=True)
     creation_date = models.DateField("Дата создания", blank=True)
@@ -107,12 +114,17 @@ class GenreFilmwork(UUIDMixin):
 
 
 class PersonFilmwork(UUIDMixin):
+    class RoleType(models.TextChoices):
+        MALE = "actor", _("Actor")
+        FEMALE = "creator", _("Creator")
+
     film_work = models.ForeignKey("Filmwork", on_delete=models.CASCADE)
     person = models.ForeignKey(
         "Person", on_delete=models.CASCADE, verbose_name="Персона"
     )
-    role = models.TextField("Роль")
     created = models.DateTimeField(auto_now_add=True)
+    profession = models.TextField(_("profession"), choices=RoleType.choices, null=True)
+    role = models.TextField(_("role"), null=True)
 
     class Meta:
         db_table = 'content"."person_film_work'
