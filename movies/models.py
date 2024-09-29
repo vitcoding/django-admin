@@ -21,14 +21,18 @@ class TimeStampedMixin(models.Model):
     modified = models.DateTimeField(_("modified"), auto_now=True)
 
     class Meta:
-        # Этот параметр указывает Django, что этот класс не является представлением таблицы
+        # Этот параметр указывает Django,
+        # что этот класс не является представлением таблицы
         abstract = True
 
 
 class UUIDMixin(models.Model):
-    # Типичная модель в Django использует число в качестве id. В таких ситуациях поле не описывается в модели.
+    # Типичная модель в Django использует число в качестве id.
+    # В таких ситуациях поле не описывается в модели.
     # Вам же придётся явно объявить primary key.
-    id = models.UUIDField(_("id"), primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(
+        _("id"), primary_key=True, default=uuid.uuid4, editable=False
+    )
 
     class Meta:
         abstract = True
@@ -43,8 +47,11 @@ class Genre(UUIDMixin, TimeStampedMixin):
     description = models.TextField(_("description"), blank=True)
 
     class Meta:
-        # Ваши таблицы находятся в нестандартной схеме. Это нужно указать в классе модели
-        db_table = 'content"."genre'  # Работает только с таким порядком кавычек
+        # Ваши таблицы находятся в нестандартной схеме.
+        # Это нужно указать в классе модели
+
+        # Работает только с таким порядком кавычек
+        db_table = 'content"."genre'
         # Следующие два поля отвечают за название модели в интерфейсе
         verbose_name = _("genre")
         verbose_name_plural = _("genres")
