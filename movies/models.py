@@ -1,3 +1,4 @@
+# Исходные модели
 import uuid
 
 from django.core.validators import MaxValueValidator, MinValueValidator
