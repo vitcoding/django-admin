@@ -136,6 +136,7 @@ class PersonFilmwork(UUIDMixin):
     person = models.ForeignKey(
         "Person", on_delete=models.CASCADE, verbose_name=_("person")
     )
+    # blank = True # ??? for role
     role = models.TextField(_("role"))
     created = models.DateTimeField(_("created"), auto_now_add=True)
 
