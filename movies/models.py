@@ -56,6 +56,12 @@ class Genre(UUIDMixin, TimeStampedMixin):
         verbose_name = _("genre")
         verbose_name_plural = _("genres")
         ordering = ["name"]
+        indexes = [
+            models.Index(
+                fields=["name"],
+                name="genre_name_idx",
+            ),
+        ]
 
     def __str__(self):
         return self.name
@@ -69,6 +75,12 @@ class Person(UUIDMixin, TimeStampedMixin):
         verbose_name = _("person")
         verbose_name_plural = _("persons")
         ordering = ["full_name"]
+        indexes = [
+            models.Index(
+                fields=["full_name"],
+                name="person_full_name_idx",
+            ),
+        ]
 
     def __str__(self):
         return self.full_name
@@ -109,6 +121,20 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         verbose_name = _("film_work")
         verbose_name_plural = _("film_works")
         ordering = ["-modified"]
+        indexes = [
+            models.Index(
+                fields=["title"],
+                name="film_work_title_idx",
+            ),
+            models.Index(
+                fields=["rating"],
+                name="film_work_rating_idx",
+            ),
+            models.Index(
+                fields=["type"],
+                name="film_work_type_idx",
+            ),
+        ]
 
     def __str__(self):
         return self.title
@@ -127,6 +153,15 @@ class GenreFilmwork(UUIDMixin):
         db_table = 'content"."genre_film_work'
         verbose_name = _("genre_film_work")
         verbose_name_plural = _("genres_film_work")
+        indexes = [
+            models.Index(
+                fields=["film_work", "genre"],
+                name="film_work_genre_idx",
+            ),
+        ]
+        unique_together = [
+            ["film_work", "genre"],
+        ]
 
 
 class PersonFilmwork(UUIDMixin):
@@ -143,3 +178,12 @@ class PersonFilmwork(UUIDMixin):
         db_table = 'content"."person_film_work'
         verbose_name = _("person_film_work")
         verbose_name_plural = _("persons_film_work")
+        indexes = [
+            models.Index(
+                fields=["film_work", "person"],
+                name="film_work_person_idx",
+            ),
+        ]
+        unique_together = [
+            ["film_work", "person"],
+        ]
