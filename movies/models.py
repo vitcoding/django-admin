@@ -115,11 +115,11 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
 
 
 class GenreFilmwork(UUIDMixin):
-    film_work = models.ForeignKey(
-        "Filmwork", on_delete=models.CASCADE, verbose_name=_("film_work")
-    )
     genre = models.ForeignKey(
         "Genre", on_delete=models.CASCADE, verbose_name=_("genre")
+    )
+    film_work = models.ForeignKey(
+        "Filmwork", on_delete=models.CASCADE, verbose_name=_("film_work")
     )
     created = models.DateTimeField(_("created"), auto_now_add=True)
 
@@ -130,13 +130,12 @@ class GenreFilmwork(UUIDMixin):
 
 
 class PersonFilmwork(UUIDMixin):
-    film_work = models.ForeignKey(
-        "Filmwork", on_delete=models.CASCADE, verbose_name=_("film_work")
-    )
     person = models.ForeignKey(
         "Person", on_delete=models.CASCADE, verbose_name=_("person")
     )
-    # blank = True # ??? for role
+    film_work = models.ForeignKey(
+        "Filmwork", on_delete=models.CASCADE, verbose_name=_("film_work")
+    )
     role = models.TextField(_("role"))
     created = models.DateTimeField(_("created"), auto_now_add=True)
 
