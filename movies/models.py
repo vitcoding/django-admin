@@ -56,6 +56,7 @@ class Genre(UUIDMixin, TimeStampedMixin):
         verbose_name = _("genre")
         verbose_name_plural = _("genres")
         ordering = ["name"]
+
         indexes = [
             models.Index(
                 fields=["name"],
@@ -75,6 +76,7 @@ class Person(UUIDMixin, TimeStampedMixin):
         verbose_name = _("person")
         verbose_name_plural = _("persons")
         ordering = ["full_name"]
+
         indexes = [
             models.Index(
                 fields=["full_name"],
@@ -121,6 +123,7 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         verbose_name = _("film_work")
         verbose_name_plural = _("film_works")
         ordering = ["-modified"]
+
         indexes = [
             models.Index(
                 fields=["title"],
@@ -153,6 +156,7 @@ class GenreFilmwork(UUIDMixin):
         db_table = 'content"."genre_film_work'
         verbose_name = _("genre_film_work")
         verbose_name_plural = _("genres_film_work")
+
         indexes = [
             models.Index(
                 fields=["film_work", "genre"],
@@ -178,6 +182,7 @@ class PersonFilmwork(UUIDMixin):
         db_table = 'content"."person_film_work'
         verbose_name = _("person_film_work")
         verbose_name_plural = _("persons_film_work")
+
         indexes = [
             models.Index(
                 fields=["film_work", "person"],
