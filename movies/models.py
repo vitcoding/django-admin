@@ -2,34 +2,18 @@ import uuid
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
-# python manage.py makemessages -l en -l ru
-# python manage.py compilemessages -l en -l ru
 from django.utils.translation import gettext_lazy as _
-
-# Для ситуаций, когда необходимо создать новый проект на Django
-# с существующей базой данных, разработчики фреймворка создали
-# команду python manage.py inspectdb.
-# Она возвращает содержимое models.py, основанное на схеме БД,
-# и позволяет пропустить этап описания моделей вручную.
 
 
 class TimeStampedMixin(models.Model):
-    # auto_now_add автоматически выставит дату создания записи
     created = models.DateTimeField(_("created"), auto_now_add=True)
-    # auto_now изменятся при каждом обновлении записи
     modified = models.DateTimeField(_("modified"), auto_now=True)
 
     class Meta:
-        # Этот параметр указывает Django,
-        # что этот класс не является представлением таблицы
         abstract = True
 
 
 class UUIDMixin(models.Model):
-    # Типичная модель в Django использует число в качестве id.
-    # В таких ситуациях поле не описывается в модели.
-    # Вам же придётся явно объявить primary key.
     id = models.UUIDField(
         _("id"), primary_key=True, default=uuid.uuid4, editable=False
     )
@@ -38,21 +22,12 @@ class UUIDMixin(models.Model):
         abstract = True
 
 
-# Указывать models.Model родителем Genre не обязательно,
-# потому что этот класс уже является родителем у миксинов.
 class Genre(UUIDMixin, TimeStampedMixin):
-    # Первым аргументом обычно идёт человекочитаемое название поля
     name = models.CharField(_("name_title"), max_length=255)
-    # blank=True делает поле необязательным для заполнения.
     description = models.TextField(_("description"), blank=True)
 
     class Meta:
-        # Ваши таблицы находятся в нестандартной схеме.
-        # Это нужно указать в классе модели
-
-        # Работает только с таким порядком кавычек
         db_table = 'content"."genre'
-        # Следующие два поля отвечают за название модели в интерфейсе
         verbose_name = _("genre")
         verbose_name_plural = _("genres")
         ordering = ["name"]
@@ -89,11 +64,6 @@ class Person(UUIDMixin, TimeStampedMixin):
 
 
 class Filmwork(UUIDMixin, TimeStampedMixin):
-    # class Filmtype(models.TextChoices):
-    #     movie = ("movie", "movie")
-    #     tv_show = ("tv_show", "tv_show")
-
-    # Enumeration types
     class Filmtype(models.TextChoices):
         MOVIE = "movie", _("movie")
         TV_SHOW = "tv_show", _("tv_show")
@@ -109,7 +79,6 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
     type = models.CharField(
         _("type"),
         choices=Filmtype.choices,
-        # default=Filmtype.MOVIE,
     )
     genres = models.ManyToManyField(
         Genre, through="GenreFilmwork", verbose_name=_("genres")
