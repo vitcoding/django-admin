@@ -24,7 +24,7 @@ class UUIDMixin(models.Model):
 
 class Genre(UUIDMixin, TimeStampedMixin):
     name = models.CharField(_("name_title"), max_length=255)
-    description = models.TextField(_("description"), blank=True)
+    description = models.TextField(_("description"), blank=True, null=True)
 
     class Meta:
         db_table = 'content"."genre'
@@ -69,12 +69,14 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
         TV_SHOW = "tv_show", _("tv_show")
 
     title = models.TextField(_("title"))
-    description = models.TextField(_("description"), blank=True)
-    creation_date = models.DateField(_("creation_date"), blank=True)
+    description = models.TextField(_("description"), blank=True, null=True)
+    creation_date = models.DateField(_("creation_date"), blank=True, null=True)
+    # file_path = models.TextField(_("file_path"), blank=True, null=True)
     rating = models.FloatField(
         _("rating"),
         blank=True,
-        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        null=True,
+        validators=[MinValueValidator(0), MaxValueValidator(10)],
     )
     type = models.CharField(
         _("type"),
@@ -113,11 +115,11 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
 
 
 class GenreFilmwork(UUIDMixin):
-    genre = models.ForeignKey(
-        "Genre", on_delete=models.CASCADE, verbose_name=_("genre")
-    )
     film_work = models.ForeignKey(
         "Filmwork", on_delete=models.CASCADE, verbose_name=_("film_work")
+    )
+    genre = models.ForeignKey(
+        "Genre", on_delete=models.CASCADE, verbose_name=_("genre")
     )
     created = models.DateTimeField(_("created"), auto_now_add=True)
 
@@ -126,23 +128,23 @@ class GenreFilmwork(UUIDMixin):
         verbose_name = _("genre_film_work")
         verbose_name_plural = _("genres_film_work")
 
-        indexes = [
-            models.Index(
+        constraints = [
+            models.UniqueConstraint(
                 fields=["film_work", "genre"],
                 name="film_work_genre_idx",
             ),
         ]
-        unique_together = [
-            ["film_work", "genre"],
-        ]
+
+    def __str__(self):
+        return ""
 
 
 class PersonFilmwork(UUIDMixin):
-    person = models.ForeignKey(
-        "Person", on_delete=models.CASCADE, verbose_name=_("person")
-    )
     film_work = models.ForeignKey(
         "Filmwork", on_delete=models.CASCADE, verbose_name=_("film_work")
+    )
+    person = models.ForeignKey(
+        "Person", on_delete=models.CASCADE, verbose_name=_("person")
     )
     role = models.TextField(_("role"))
     created = models.DateTimeField(_("created"), auto_now_add=True)
@@ -152,12 +154,12 @@ class PersonFilmwork(UUIDMixin):
         verbose_name = _("person_film_work")
         verbose_name_plural = _("persons_film_work")
 
-        indexes = [
-            models.Index(
-                fields=["film_work", "person"],
-                name="film_work_person_idx",
+        constraints = [
+            models.UniqueConstraint(
+                fields=["film_work", "person", "role"],
+                name="film_work_person_role_idx",
             ),
         ]
-        unique_together = [
-            ["film_work", "person"],
-        ]
+
+    def __str__(self):
+        return ""
